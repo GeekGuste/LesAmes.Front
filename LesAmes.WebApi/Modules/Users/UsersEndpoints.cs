@@ -17,7 +17,7 @@ public static class UsersEndpoints
         {
             var token = await userService.LoginUserAsync(email, password);
 
-            return token != null ? Results.Ok(new { token }) : Results.Unauthorized();
+            return token != null ? Results.Ok(token) : Results.Unauthorized();
         });
 
         return app;

@@ -42,7 +42,7 @@ public static class MigrationManager
             string adminEmail = "admin@gmail.com";
             string adminPassword = "Admin1234!";
 
-            var adminUser = await userManager.FindByEmailAsync(adminEmail);
+            var adminUser = await userManager.FindByNameAsync(adminEmail);
             if (adminUser == null)
             {
                 adminUser = new ApplicationUser

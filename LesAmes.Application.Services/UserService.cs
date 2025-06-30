@@ -1,4 +1,5 @@
 ﻿using LesAmes.Domain.Port;
+using LesAmes.Dto.Users;
 
 namespace LesAmes.Application.Services;
 
@@ -16,8 +17,13 @@ public class UserService
         return _userService.RegisterAsync(email, password);
     }
 
-    public Task<string?> LoginUserAsync(string email, string password)
+    public async Task<TokenResponseDto> LoginUserAsync(string email, string password)
     {
-        return _userService.LoginAsync(email, password);
+        var response = await _userService.LoginAsync(email, password);
+        return new TokenResponseDto
+        {
+            AccessToken = response.AccessToken,
+            RefreshToken = response.RefreshToken
+        };
     }
 }
