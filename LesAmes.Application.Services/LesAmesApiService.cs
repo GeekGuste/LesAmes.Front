@@ -3,7 +3,7 @@ using System.Security.Claims;
 
 namespace LesAmes.Application.Services;
 
-public class LesAmesApiService : ILesAmesApiService
+public abstract class LesAmesApiService : ILesAmesApiService
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
 

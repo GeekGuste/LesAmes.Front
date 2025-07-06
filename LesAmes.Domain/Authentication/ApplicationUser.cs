@@ -8,5 +8,6 @@ public class ApplicationUser : IdentityUser<string>
     public string Email { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
-    public virtual ICollection<ApplicationUserRole> UserRoles { get; set; }
+    public ICollection<ApplicationUserRole> UserRoles { get; set; } = new List<ApplicationUserRole>();
+    public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 }

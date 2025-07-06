@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LesAmes.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250607233150_AddIdentityInformations")]
-    partial class AddIdentityInformations
+    [Migration("20250706210824_Reinitialisation")]
+    partial class Reinitialisation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -63,17 +63,18 @@ namespace LesAmes.Infrastructure.Database.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("text");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(21)
-                        .HasColumnType("character varying(21)");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("text");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
@@ -108,6 +109,11 @@ namespace LesAmes.Infrastructure.Database.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
+                    b.Property<string>("UserType")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("character varying(5)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
@@ -119,7 +125,7 @@ namespace LesAmes.Infrastructure.Database.Migrations
 
                     b.ToTable("AspNetUsers", (string)null);
 
-                    b.HasDiscriminator().HasValue("ApplicationUser");
+                    b.HasDiscriminator<string>("UserType").HasValue("User");
 
                     b.UseTphMappingStrategy();
                 });
@@ -132,16 +138,57 @@ namespace LesAmes.Infrastructure.Database.Migrations
                     b.Property<string>("RoleId")
                         .HasColumnType("text");
 
-                    b.Property<string>("RoleId1")
-                        .HasColumnType("text");
-
                     b.HasKey("UserId", "RoleId");
 
                     b.HasIndex("RoleId");
 
-                    b.HasIndex("RoleId1");
-
                     b.ToTable("AspNetUserRoles", (string)null);
+                });
+
+            modelBuilder.Entity("LesAmes.Domain.Authentication.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("Expires")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Token")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
+                });
+
+            modelBuilder.Entity("LesAmes.Domain.Souls.Soul", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("TutorId")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TutorId");
+
+                    b.ToTable("Souls");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -239,26 +286,16 @@ namespace LesAmes.Infrastructure.Database.Migrations
                 {
                     b.HasBaseType("LesAmes.Domain.Authentication.ApplicationUser");
 
-                    b.Property<string>("FirstName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("text");
-
                     b.HasDiscriminator().HasValue("Tutor");
                 });
 
             modelBuilder.Entity("LesAmes.Domain.Authentication.ApplicationUserRole", b =>
                 {
-                    b.HasOne("LesAmes.Domain.Authentication.ApplicationRole", null)
-                        .WithMany()
+                    b.HasOne("LesAmes.Domain.Authentication.ApplicationRole", "Role")
+                        .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("LesAmes.Domain.Authentication.ApplicationRole", "Role")
-                        .WithMany()
-                        .HasForeignKey("RoleId1");
 
                     b.HasOne("LesAmes.Domain.Authentication.ApplicationUser", "User")
                         .WithMany("UserRoles")
@@ -269,6 +306,24 @@ namespace LesAmes.Infrastructure.Database.Migrations
                     b.Navigation("Role");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("LesAmes.Domain.Authentication.RefreshToken", b =>
+                {
+                    b.HasOne("LesAmes.Domain.Authentication.ApplicationUser", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("LesAmes.Domain.Souls.Soul", b =>
+                {
+                    b.HasOne("LesAmes.Domain.Users.Tutor", "Tutor")
+                        .WithMany("Mentees")
+                        .HasForeignKey("TutorId");
+
+                    b.Navigation("Tutor");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -307,9 +362,21 @@ namespace LesAmes.Infrastructure.Database.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("LesAmes.Domain.Authentication.ApplicationUser", b =>
+            modelBuilder.Entity("LesAmes.Domain.Authentication.ApplicationRole", b =>
                 {
                     b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("LesAmes.Domain.Authentication.ApplicationUser", b =>
+                {
+                    b.Navigation("RefreshTokens");
+
+                    b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("LesAmes.Domain.Users.Tutor", b =>
+                {
+                    b.Navigation("Mentees");
                 });
 #pragma warning restore 612, 618
         }

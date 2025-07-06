@@ -24,13 +24,29 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
 
         modelBuilder.Entity<ApplicationUser>(b =>
         {
-            // Each User can have many entries in the UserRole join table
+            // Each User can have many entries in the UserRole join table  
             b.HasDiscriminator<string>("UserType")
                 .HasValue<ApplicationUser>("User")
                 .HasValue<Tutor>("Tutor");
             b.HasMany(e => e.UserRoles)
                 .WithOne(e => e.User)
                 .HasForeignKey(ur => ur.UserId)
+                .IsRequired();
+        });
+
+        modelBuilder.Entity<ApplicationUserRole>(entity =>
+        {
+            entity.ToTable("AspNetUserRoles");
+            entity.HasKey(r => new { r.UserId, r.RoleId });
+
+            entity.HasOne(r => r.User)
+                .WithMany(u => u.UserRoles)
+                .HasForeignKey(r => r.UserId)
+                .IsRequired();
+
+            entity.HasOne(r => r.Role)
+                .WithMany(r => r.UserRoles)
+                .HasForeignKey(r => r.RoleId)
                 .IsRequired();
         });
 
@@ -41,11 +57,6 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .IsRequired(false);
 
         modelBuilder.Entity<Soul>(b =>
-        {
-            b.HasKey(s => s.Id);
-        });
-
-        modelBuilder.Entity<RefreshToken>(b =>
         {
             b.HasKey(s => s.Id);
         });

@@ -135,14 +135,9 @@ namespace LesAmes.Infrastructure.Database.Migrations
                     b.Property<string>("RoleId")
                         .HasColumnType("text");
 
-                    b.Property<string>("RoleId1")
-                        .HasColumnType("text");
-
                     b.HasKey("UserId", "RoleId");
 
                     b.HasIndex("RoleId");
-
-                    b.HasIndex("RoleId1");
 
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
@@ -293,15 +288,11 @@ namespace LesAmes.Infrastructure.Database.Migrations
 
             modelBuilder.Entity("LesAmes.Domain.Authentication.ApplicationUserRole", b =>
                 {
-                    b.HasOne("LesAmes.Domain.Authentication.ApplicationRole", null)
-                        .WithMany()
+                    b.HasOne("LesAmes.Domain.Authentication.ApplicationRole", "Role")
+                        .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("LesAmes.Domain.Authentication.ApplicationRole", "Role")
-                        .WithMany()
-                        .HasForeignKey("RoleId1");
 
                     b.HasOne("LesAmes.Domain.Authentication.ApplicationUser", "User")
                         .WithMany("UserRoles")
@@ -317,7 +308,7 @@ namespace LesAmes.Infrastructure.Database.Migrations
             modelBuilder.Entity("LesAmes.Domain.Authentication.RefreshToken", b =>
                 {
                     b.HasOne("LesAmes.Domain.Authentication.ApplicationUser", "User")
-                        .WithMany()
+                        .WithMany("RefreshTokens")
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
@@ -368,8 +359,15 @@ namespace LesAmes.Infrastructure.Database.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("LesAmes.Domain.Authentication.ApplicationRole", b =>
+                {
+                    b.Navigation("UserRoles");
+                });
+
             modelBuilder.Entity("LesAmes.Domain.Authentication.ApplicationUser", b =>
                 {
+                    b.Navigation("RefreshTokens");
+
                     b.Navigation("UserRoles");
                 });
 
