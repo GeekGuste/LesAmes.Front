@@ -51,7 +51,7 @@ public static class UsersEndpoints
         [Authorize(Roles = $"{Roles.Admin},{Roles.SuperAdmin}")]
         async (UserService userService, string id, ChangePasswordDto dto) =>
         {
-            var result = await userService.ChangePasswordAsync(id, dto);
+            var result = await userService.ChangePasswordAsync(dto);
             return result.Succeeded ? Results.NoContent() : Results.BadRequest(result.Errors);
         });
 

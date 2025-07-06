@@ -17,9 +17,9 @@ public class UserServiceIdentity : IUserService
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IConfiguration _config;
     private readonly AppDbContext _dbContext;
-    private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly RoleManager<ApplicationRole> _roleManager;
 
-    public UserServiceIdentity(UserManager<ApplicationUser> userManager, IConfiguration config, AppDbContext dbContext, RoleManager<IdentityRole> roleManager)
+    public UserServiceIdentity(UserManager<ApplicationUser> userManager, IConfiguration config, AppDbContext dbContext, RoleManager<ApplicationRole> roleManager)
     {
         _userManager = userManager;
         _config = config;

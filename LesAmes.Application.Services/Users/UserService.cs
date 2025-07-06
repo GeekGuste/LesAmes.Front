@@ -33,9 +33,9 @@ public class UserService : LesAmesApiService
     {
         return _userService.ChangePasswordAsync(CurrentUserId, dto.NewPassword);
     }
-    public Task<IdentityResult> ChangePasswordAsync(string userId, ChangePasswordDto dto)
+    public Task<IdentityResult> ChangePasswordAsync(ChangePasswordDto dto)
     {
-        return _userService.ChangePasswordAsync(userId, dto.NewPassword);
+        return _userService.ChangePasswordAsync(CurrentUserId, dto.NewPassword);
     }
 
     public async Task<ApplicationUserDto> GetCurrentUserAsync()
