@@ -44,5 +44,10 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
         {
             b.HasKey(s => s.Id);
         });
+
+        modelBuilder.Entity<RefreshToken>(b =>
+        {
+            b.HasKey(s => s.Id);
+        });
     }
 }
