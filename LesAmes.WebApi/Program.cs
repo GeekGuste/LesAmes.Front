@@ -1,7 +1,7 @@
 // Move the ConfigureServices method to a separate static class to resolve CS8803 and CS0106.  
 // Also, ensure the method is used to resolve CS8321.  
 
-using LesAmes.Application.Services;
+using LesAmes.Application.Services.Users;
 using LesAmes.Domain.Authentication;
 using LesAmes.Domain.Port;
 using LesAmes.Infrastructure.Database;

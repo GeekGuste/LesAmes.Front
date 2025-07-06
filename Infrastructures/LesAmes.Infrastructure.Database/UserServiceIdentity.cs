@@ -17,12 +17,14 @@ public class UserServiceIdentity : IUserService
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IConfiguration _config;
     private readonly AppDbContext _dbContext;
+    private readonly RoleManager<IdentityRole> _roleManager;
 
-    public UserServiceIdentity(UserManager<ApplicationUser> userManager, IConfiguration config, AppDbContext dbContext)
+    public UserServiceIdentity(UserManager<ApplicationUser> userManager, IConfiguration config, AppDbContext dbContext, RoleManager<IdentityRole> roleManager)
     {
         _userManager = userManager;
         _config = config;
         _dbContext = dbContext;
+        _roleManager = roleManager;
     }
 
     public async Task<bool> RegisterAsync(string email, string password)
@@ -118,9 +120,8 @@ public class UserServiceIdentity : IUserService
     public async Task<ApplicationUser?> GetByIdAsync(string id) =>
         await _userManager.FindByIdAsync(id);
 
-    public async Task<ApplicationUser?> GetCurrentAsync(ClaimsPrincipal userPrincipal)
+    public async Task<ApplicationUser?> GetCurrentAsync(string userId)
     {
-        var userId = _userManager.GetUserId(userPrincipal);
         return await GetByIdAsync(userId);
     }
 
@@ -132,5 +133,42 @@ public class UserServiceIdentity : IUserService
         if (!string.IsNullOrWhiteSpace(updateUser.LastName)) user.LastName = updateUser.LastName;
 
         return await _userManager.UpdateAsync(user);
+    }
+
+    public async Task<IdentityResult> ChangePasswordAsync(string id, string newPassword)
+    {
+        var user = await GetByIdAsync(id);
+        if (user == null) return IdentityResult.Failed(new IdentityError { Description = "User not found" });
+        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        return await _userManager.ResetPasswordAsync(user, token, newPassword);
+    }
+
+    public async Task<IdentityResult> DisableAsync(string id)
+    {
+        var user = await GetByIdAsync(id);
+        if (user == null) return IdentityResult.Failed(new IdentityError { Description = "User not found" });
+        return await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
+    }
+
+    public async Task<IdentityResult> EnableAsync(string id)
+    {
+        var user = await GetByIdAsync(id);
+        if (user == null) return IdentityResult.Failed(new IdentityError { Description = "User not found" });
+        return await _userManager.SetLockoutEndDateAsync(user, null);
+    }
+
+    public async Task<IdentityResult> AddRoleAsync(string id, string role)
+    {
+        var user = await GetByIdAsync(id);
+        if (user == null) return IdentityResult.Failed(new IdentityError { Description = "User not found" });
+        if (!await _roleManager.RoleExistsAsync(role)) return IdentityResult.Failed(new IdentityError { Description = "Role does not exist" });
+        return await _userManager.AddToRoleAsync(user, role);
+    }
+
+    public async Task<IdentityResult> RemoveRoleAsync(string id, string role)
+    {
+        var user = await GetByIdAsync(id);
+        if (user == null) return IdentityResult.Failed(new IdentityError { Description = "User not found" });
+        return await _userManager.RemoveFromRoleAsync(user, role);
     }
 }
