@@ -1,4 +1,5 @@
 ﻿using LesAmes.Domain.Authentication;
+using LesAmes.Domain.Hobbies;
 using LesAmes.Domain.Souls;
 using LesAmes.Domain.Users;
 using Microsoft.AspNetCore.Identity;
@@ -17,6 +18,10 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<ApplicationUser> Users { get; set; }
     public DbSet<Soul> Souls { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
+    public DbSet<HobbyCategory> HobbyCategories { get; set; }
+    public DbSet<Hobby> Hobbies { get; set; }
+    public DbSet<ImpactFamily> ImpactFamilies { get; set; }
+    public DbSet<AgeRange> AgeRanges { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -59,6 +64,30 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
         modelBuilder.Entity<Soul>(b =>
         {
             b.HasKey(s => s.Id);
+            b.HasMany(e => e.Hobbies)
+                .WithMany(h => h.Souls);
+            b.HasOne(s => s.AgeRange);
         });
+
+        modelBuilder.Entity<Hobby>(b =>
+        {
+            b.HasKey(s => s.Id);
+        });
+
+        modelBuilder.Entity<ImpactFamily>(b =>
+        {
+            b.HasKey(s => s.Id);
+        });
+
+        modelBuilder.Entity<HobbyCategory>(b =>
+        {
+            b.HasKey(t => t.Id);
+            b.HasMany(t => t.Hobbies)
+                .WithOne(s => s.HobbyCategory)
+                .HasForeignKey(s => s.HobbyCategoryId)
+                .IsRequired(true);
+        });
+
+
     }
 }
