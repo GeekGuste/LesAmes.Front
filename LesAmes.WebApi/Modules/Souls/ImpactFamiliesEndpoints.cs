@@ -16,7 +16,7 @@ public static class ImpactFamiliesEndpoints
 
         app.MapPut("/{id}",
         [Authorize(Roles = $"{Roles.Admin},{Roles.SuperAdmin}")]
-        async (int id, UpdateImpactFamilyInput input, UpdateImpactFamilyService updateImpactFamilyService) => updateImpactFamilyService.UpdateAsync(id, input))
+        async (string id, UpdateImpactFamilyInput input, UpdateImpactFamilyService updateImpactFamilyService) => updateImpactFamilyService.UpdateAsync(id, input))
             .WithDisplayName("UpdateImpactFamily");
 
         app.MapGet("",

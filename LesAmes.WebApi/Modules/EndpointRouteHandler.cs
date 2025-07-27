@@ -8,7 +8,9 @@ public static class EndpointRouteHandler
     public static WebApplication MapEndpoints(this WebApplication app)
     {
         app.MapGroup("/users").RegisterUsersEndpoints().WithTags("User");
-        app.MapGroup("/impact-families").RegisterImpactFamiliesEndpoints().WithTags("ImpactFamily");
+        app.MapGroup("/impact-families").RegisterImpactFamiliesEndpoints().WithTags("ImpactFamilies");
+        app.MapGroup("/age-ranges").RegisterAgeRangesEndpoints().WithTags("AgeRanges");
+        app.MapGroup("/hobbies").RegisterHobbiesEndpoints().WithTags("Hobbies");
 
         return app;
     }

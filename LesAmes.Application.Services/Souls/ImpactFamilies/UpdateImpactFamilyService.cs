@@ -1,7 +1,7 @@
 ﻿using LesAmes.Dto.Souls;
 using LesAmes.Infrastructure.Database;
 
-namespace LesAmes.Application.Services.Souls;
+namespace LesAmes.Application.Services.Souls.ImpactFamilies;
 
 public class UpdateImpactFamilyService
 {
@@ -12,7 +12,7 @@ public class UpdateImpactFamilyService
         _dbContext = dbContext;
     }
 
-    public async Task UpdateAsync(int id, UpdateImpactFamilyInput input)
+    public async Task UpdateAsync(string id, UpdateImpactFamilyInput input)
     {
         var impactFamily = await _dbContext.ImpactFamilies.FindAsync(id);
         if (impactFamily == null)
