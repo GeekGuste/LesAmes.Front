@@ -1,4 +1,5 @@
 ﻿using LesAmes.Domain.Souls;
+using LesAmes.Domain.Users;
 
 namespace LesAmes.Domain.Hobbies;
 
@@ -11,4 +12,5 @@ public class Hobby
 
     public virtual HobbyCategory HobbyCategory { get; set; }
     public List<Soul> Souls { get; set; }
+    public ICollection<Tutor> Tutors { get; set; } = new List<Tutor>();
 }

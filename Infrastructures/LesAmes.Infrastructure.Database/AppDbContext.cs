@@ -55,11 +55,22 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
                 .IsRequired();
         });
 
-        modelBuilder.Entity<Tutor>()
-            .HasMany(t => t.Mentees)
-            .WithOne(s => s.Tutor)
-            .HasForeignKey(s => s.TutorId)
-            .IsRequired(false);
+
+        modelBuilder.Entity<Tutor>(t =>
+            {
+                t.Property(x => x.BirthYear)
+                    .HasColumnName("BirthYear")
+                    .IsRequired();
+                t.HasMany(t => t.Mentees)
+                    .WithOne(s => s.Tutor)
+                    .HasForeignKey(s => s.TutorId)
+                    .IsRequired(false);
+                t.HasMany(t => t.Hobbies)
+                    .WithMany(h => h.Tutors)
+                    .UsingEntity(j =>
+                            j.ToTable("TutorHobbies")  // table de jonction explicite (optionnel)
+                    );
+            });
 
         modelBuilder.Entity<Soul>(b =>
         {

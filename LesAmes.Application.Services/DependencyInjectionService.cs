@@ -1,7 +1,9 @@
-﻿using LesAmes.Application.Services.Souls.AgeRanges;
+﻿using LesAmes.Application.Services.Souls;
+using LesAmes.Application.Services.Souls.AgeRanges;
 using LesAmes.Application.Services.Souls.Hobbies;
 using LesAmes.Application.Services.Souls.HobbyCategories;
 using LesAmes.Application.Services.Souls.ImpactFamilies;
+using LesAmes.Application.Services.Tutors;
 using LesAmes.Application.Services.Users;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -23,6 +25,12 @@ public static class DependencyInjectionService
         services.AddScoped<CreateHobbyCategoryService>();
         services.AddScoped<GetHobbyCategoriesService>();
         services.AddScoped<UpdateHobbyCategoryService>();
+
+        services.AddScoped<RegisterUpdateTutorService>();
+
+        services.AddScoped<RegisterSoulsService>();
+        services.AddScoped<UpdateSoulsService>();
+        services.AddScoped<GetSoulsService>();
 
         return services;
     }
