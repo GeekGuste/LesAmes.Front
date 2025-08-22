@@ -1,0 +1,6 @@
+@LesAmes.WebApi_HostAddress = http://localhost:5290
+
+GET {{LesAmes.WebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
